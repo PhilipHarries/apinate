@@ -1,0 +1,20 @@
+{
+  "contenttype": "html",
+  "mappings": [
+    {
+      "resource": "echo",
+      "command": "echo",
+      "params": true
+    },
+    {
+      "resource": "cat",
+      "command": "cat",
+      "params": true
+    },
+    {
+      "resource": "ping",
+      "command": "ping -c 5 ",
+      "params": true
+    }
+  ]
+}

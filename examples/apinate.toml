@@ -1,0 +1,13 @@
+contenttype = "json"
+[[mappings]]
+  resource = "echo"
+  command = "echo"
+  params = true
+[[mappings]]
+  resource = "cat"
+  command = "cat"
+  params = true
+[[mappings]]
+  resource = "ping"
+  command = "ping -c 5 "
+  params = true

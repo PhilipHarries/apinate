@@ -1,0 +1,6 @@
+language: go
+go:
+        - 1.6.3
+        - tip
+script:
+        - ./run_tests.sh
