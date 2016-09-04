@@ -51,7 +51,6 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Println(config)
 
 	router := gin.Default()
 	if config.ContentType == "html" {
@@ -59,13 +58,11 @@ func main() {
 	}
 
 	for _, mapping := range config.Mappings {
-		fmt.Println(mapping.Resource)
-		fmt.Println(mapping.Command)
+		fmt.Println(fmt.Sprintf("mapping %s to command %s", mapping.Resource, mapping.Command))
 		res := mapping.Resource
 		cmd := mapping.Command
 		params := mapping.Params
 		var command string
-		fmt.Println(params)
 		if params {
 			joinedParams := []string{res, "/:params"}
 			fmt.Println(joinedParams)
