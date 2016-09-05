@@ -135,6 +135,7 @@ In order to report on the systems hostname, and the time taken to ping parameter
 ```
 ### output
 ```
+curl http://localhost:8080/system-name
 <html>
   <head></head>
   <body>
