@@ -2,7 +2,11 @@
 
 # Configuration-driven arbitrary APIs
 
-*apinate* is a simple HTTP API that can be configured to run any back end script or command and display the output in a variety of formats.
+*apinate* is a simple HTTP API that can be configured to run any back end script or command and display the output in a variety of formats.  It runs as a single binary, and is driven by a single configuration file.
+
+*apinate* can output JSON, YAML or plain text, and can output configurably templated HTML.
+
+*apinate* is the simplest and easiest way of spinning up a functional API.
 
 ### Caution
 

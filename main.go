@@ -48,6 +48,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	if config.ContentType == "html" {
 		templateLocations := []string{
@@ -71,7 +72,6 @@ func main() {
 		var command string
 		if params {
 			joinedParams := []string{res, "/:params"}
-			fmt.Println(joinedParams)
 			res = strings.Join(joinedParams, "")
 		}
 		router.GET(res, func(c *gin.Context) {
