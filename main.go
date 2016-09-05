@@ -25,7 +25,6 @@ func main() {
 		"apinate.json",
 		"apinate.yaml",
 	}
-	fmt.Println(configLocations)
 	for _, configLocation := range configLocations {
 		for _, configFile := range configFiles {
 			thisConfigFile = filepath.Join(configLocation, configFile)
@@ -43,8 +42,6 @@ func main() {
 	var config cfg.Config
 	var err error
 
-	fmt.Println(configfile)
-	fmt.Println(filepath.Ext(configfile))
 	config, err = cfg.LoadConfig(configfile)
 	if err != nil {
 		fmt.Println(err)
@@ -70,6 +67,7 @@ func main() {
 		res := mapping.Resource
 		cmd := mapping.Command
 		params := mapping.Params
+		template := mapping.Template
 		var command string
 		if params {
 			joinedParams := []string{res, "/:params"}
@@ -86,8 +84,9 @@ func main() {
 			} else {
 				command = cmd
 			}
-			msg, err := exec.Exec(command)
-			if err != nil {
+			var msg []string
+			var err error
+			if msg, err = exec.Exec(command); err != nil {
 				fmt.Println(err)
 			}
 			if config.ContentType == "json" {
@@ -97,7 +96,10 @@ func main() {
 			} else if config.ContentType == "yaml" {
 				c.YAML(200, gin.H{"message": msg})
 			} else if config.ContentType == "html" {
-				c.HTML(http.StatusOK, "plain.tmpl",
+				if template == "" {
+					template = "plain.tmpl"
+				}
+				c.HTML(http.StatusOK, template,
 					gin.H{"content": msg})
 			} else if config.ContentType == "txt" {
 				c.String(http.StatusOK, "%s", strings.Join(msg, "\n"))

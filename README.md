@@ -48,7 +48,11 @@ Configuration is from resource (url) to command.  If additional parameters are t
 
 The api can be directed to output json, html, yaml or text.
 
-address, port and params directives are optional and default to 0.0.0.0, 8080 and false
+address, port, params and template directives are optional and default to 0.0.0.0, 8080, false and plain.tmpl
+
+#### HTML output
+
+If HTML output is specified, you can create your own template files in ~/.apinate/templates or /usr/share/apinate/templates, and specify which to use in the mapping configuration with the template directive
 
 ### toml
 ```
@@ -67,6 +71,7 @@ contenttype = "json"
   resource = hostname
   command = "hostname -f"
   params = false
+  template = "new.tmpl"
 ```
 
 ### json

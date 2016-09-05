@@ -13,6 +13,7 @@ type Mapping struct {
 	Resource string
 	Command  string
 	Params   bool
+	Template string
 }
 
 type Config struct {
