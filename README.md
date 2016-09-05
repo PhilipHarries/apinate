@@ -37,19 +37,23 @@ docker build .
 # Configuration
 
 *apinate* may be configured by toml, json or yaml, it will check in turn for:
- - ~/.apinate.toml
- - ~/.apinate.json
- - ~/.apinate.yaml
- - /etc/apinate.toml
- - /etc/apinate.json
- - /etc/apinate.yaml
+ - ~/.apinate/apinate.toml
+ - ~/.apinate/apinate.json
+ - ~/.apinate/apinate.yaml
+ - /etc/apinate/apinate.toml
+ - /etc/apinate/apinate.json
+ - /etc/apinate/apinate.yaml
 
 Configuration is from resource (url) to command.  If additional parameters are to be passed to the command, the mapping should be passed a boolean called "params" set to true.
 
 The api can be directed to output json, html, yaml or text.
 
+address, port and params directives are optional and default to 0.0.0.0, 8080 and false
+
 ### toml
 ```
+address = "0.0.0.0"
+port = 8080
 contenttype = "json"
 [[mappings]]
   resource = "echo"
@@ -68,6 +72,8 @@ contenttype = "json"
 ### json
 ```
 {
+  "address": "0.0.0.0"
+  "port": 8080
   "contenttype": "html"
   "mappings": [
     {
@@ -91,6 +97,8 @@ contenttype = "json"
 
 ### yaml
 ```
+address: 0.0.0.0
+port: 8080
 contenttype: txt
 mappings:
   - resource: echo

@@ -1,8 +1,3 @@
 
 Configurable location for html template files.
 Override option for html template files.
-~/.apinate or /etc/apinate default config directories.
-
-Configure listening port.
-
-

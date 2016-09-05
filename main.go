@@ -8,25 +8,31 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
 func main() {
 
 	configfile := ""
+	thisConfigFile := ""
 	configLocations := []string{
-		filepath.Join(os.Getenv("HOME"), ".apinate.toml"),
-		filepath.Join(os.Getenv("HOME"), ".apinate.json"),
-		filepath.Join(os.Getenv("HOME"), ".apinate.yaml"),
-		"/etc/apinate.toml",
-		"/etc/apinate.json",
-		"/etc/apinate.yaml",
+		filepath.Join(os.Getenv("HOME"), ".apinate"),
+		"/etc/apinate",
+	}
+	configFiles := []string{
+		"apinate.toml",
+		"apinate.json",
+		"apinate.yaml",
 	}
 	fmt.Println(configLocations)
 	for _, configLocation := range configLocations {
-		if _, err := os.Stat(configLocation); err == nil {
-			configfile = configLocation
-			break
+		for _, configFile := range configFiles {
+			thisConfigFile = filepath.Join(configLocation, configFile)
+			if _, err := os.Stat(thisConfigFile); err == nil {
+				configfile = thisConfigFile
+				break
+			}
 		}
 	}
 	if configfile == "" {
@@ -39,14 +45,7 @@ func main() {
 
 	fmt.Println(configfile)
 	fmt.Println(filepath.Ext(configfile))
-	switch {
-	case filepath.Ext(configfile) == ".toml":
-		config, err = cfg.LoadConfigTOML(configfile)
-	case filepath.Ext(configfile) == ".json":
-		config, err = cfg.LoadConfigJSON(configfile)
-	case filepath.Ext(configfile) == ".yaml":
-		config, err = cfg.LoadConfigYAML(configfile)
-	}
+	config, err = cfg.LoadConfig(configfile)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -54,7 +53,16 @@ func main() {
 
 	router := gin.Default()
 	if config.ContentType == "html" {
-		router.LoadHTMLGlob("templates/plain.tmpl")
+		templateLocations := []string{
+			filepath.Join(os.Getenv("HOME"), ".apinate/templates"),
+			"/usr/share/apinate/templates",
+		}
+		for _, templateLocation := range templateLocations {
+			if _, err := os.Stat(templateLocation); err == nil {
+				router.LoadHTMLGlob(filepath.Join(templateLocation, "*.tmpl"))
+				break
+			}
+		}
 	}
 
 	for _, mapping := range config.Mappings {
@@ -97,6 +105,7 @@ func main() {
 		})
 	}
 
-	router.Run(":8080")
+	listenString := config.Address + ":" + strconv.Itoa(config.Port)
+	router.Run(listenString)
 
 }

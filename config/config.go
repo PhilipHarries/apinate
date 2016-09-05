@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 type Mapping struct {
@@ -15,8 +16,34 @@ type Mapping struct {
 }
 
 type Config struct {
+	Address     string
+	Port        int
 	ContentType string
 	Mappings    []Mapping
+}
+
+func LoadConfig(filename string) (Config, error) {
+	var config Config
+	var err error
+	switch {
+	case filepath.Ext(filename) == ".toml":
+		config, err = LoadConfigTOML(filename)
+	case filepath.Ext(filename) == ".json":
+		config, err = LoadConfigJSON(filename)
+	case filepath.Ext(filename) == ".yaml":
+		config, err = LoadConfigYAML(filename)
+	}
+	if err != nil {
+		return config, err
+	} else {
+		if config.Port == 0 {
+			config.Port = 8080
+		}
+		if config.Address == "" {
+			config.Address = "0.0.0.0"
+		}
+	}
+	return config, nil
 }
 
 // Open configuration file and decode the TOML
