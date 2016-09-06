@@ -1,0 +1,36 @@
+.TH APINATE 1 "SEPTEMBER 2016"
+.SH NAME
+apinate \- create config-driven, arbitrary HTTP API's
+.SH SYNOPSIS
+.B apinate
+.I config-file
+.B ]
+.I file
+.B ...
+.SH DESCRIPTION
+.B apinate
+is a simple HTTP API that can be configured to run any back end
+script or command and display the output in a variety of formats.
+It runs as a single binary, and is driven by a single configuration
+file.
+.SH OPTIONS
+.IP -f
+Override the config file
+.SH FILES
+.I /etc/apinate/apinate.toml
+.I /etc/apinate/apinate.json
+.I /etc/apinate/apinate.yaml
+.RS
+The system wide configuration file - searched for in this order, and
+stopping when one is found.
+.RE
+.I ~/.apinate/apinate.toml
+.I ~/.apinate/apinate.json
+.I ~/.apinate/apinate.yaml
+.RS
+The user-specific configuration file - searched for in this order, and
+stopping when one is found - a per-user configuration file takes 
+precedence over any system configuration file.
+
+.SH AUTHOR
+Philip Harries <Philip dot Harries dot Unix dot Consulting at gmail dot com>
