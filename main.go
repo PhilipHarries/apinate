@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	cfg "github.com/PhilipHarries/apinate/config"
 	"github.com/PhilipHarries/apinate/exec"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -14,17 +14,24 @@ import (
 
 func main() {
 
+	// log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stderr) // or a file
+	log.SetLevel(log.DebugLevel)
+
 	configfile := ""
 	thisConfigFile := ""
+
 	configLocations := []string{
 		filepath.Join(os.Getenv("HOME"), ".apinate"),
 		"/etc/apinate",
 	}
+
 	configFiles := []string{
 		"apinate.toml",
 		"apinate.json",
 		"apinate.yaml",
 	}
+
 	for _, configLocation := range configLocations {
 		for _, configFile := range configFiles {
 			thisConfigFile = filepath.Join(configLocation, configFile)
@@ -35,8 +42,9 @@ func main() {
 		}
 	}
 	if configfile == "" {
-		fmt.Println("No configfile found")
-		os.Exit(1)
+		log.WithFields(log.Fields{
+			"critical": true,
+		}).Fatal("No config file could be found")
 	}
 
 	var config cfg.Config
@@ -44,8 +52,10 @@ func main() {
 
 	config, err = cfg.LoadConfig(configfile)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.WithFields(log.Fields{
+			"critical":   true,
+			"configfile": configfile,
+		}).Fatal("Configfile could not be loaded")
 	}
 
 	gin.SetMode(gin.ReleaseMode)
@@ -64,7 +74,11 @@ func main() {
 	}
 
 	for _, mapping := range config.Mappings {
-		fmt.Println(fmt.Sprintf("mapping %s to command %s", mapping.Resource, mapping.Command))
+		log.WithFields(log.Fields{
+			"resource": mapping.Resource,
+			"command":  mapping.Command,
+			"params":   mapping.Params,
+		}).Info("Mapping defined")
 		res := mapping.Resource
 		cmd := mapping.Command
 		params := mapping.Params
@@ -76,10 +90,7 @@ func main() {
 		}
 		router.GET(res, func(c *gin.Context) {
 			if params {
-				fmt.Println(fmt.Sprintf("cmd: %s", cmd))
-				fmt.Println(fmt.Sprintf("params: %s", c.Param("params")))
 				joinedCmd := []string{cmd, c.Param("params")}
-				fmt.Println(fmt.Sprintf("joinedCmd: %s", joinedCmd))
 				command = strings.Join(joinedCmd, " ")
 			} else {
 				command = cmd
@@ -87,7 +98,11 @@ func main() {
 			var msg []string
 			var err error
 			if msg, err = exec.Exec(command); err != nil {
-				fmt.Println(err)
+				log.WithFields(log.Fields{
+					"command": command,
+					"message": msg,
+					"error":   err,
+				}).Info("Error running command.")
 			}
 			if config.ContentType == "json" {
 				c.JSON(200, gin.H{"message": msg})

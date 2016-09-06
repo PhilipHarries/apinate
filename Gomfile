@@ -1,2 +1,3 @@
 gom 'github.com/gin-gonic/gin', :commit => 'f931d1ea80ae95a6fc739213cdd9399bd2967fb6'
 gom 'github.com/BurntSushi/toml', :commit => '99064174e013895bbd9b025c31100bd1d9b590ca'
+gom 'github.com/Sirupsen/logrus', :commit => '3ec0642a7fb6488f65b06f9040adc67e3990296a'
