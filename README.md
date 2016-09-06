@@ -173,3 +173,9 @@ curl http://localhost:8080/ping-time/www.google.com
 </html>
 ```
 
+# Build / Packaging
+
+build.sh will use fpm to build deb and rpm packages, call it with `build.sh <version>` where version should be the semver release version of apinate - e.g. 1.0.0
+
+build.sh relies on fpm: https://github.com/jordansissel/fpm/wiki
+
