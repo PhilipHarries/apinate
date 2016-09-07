@@ -10,7 +10,7 @@
 
 ### Caution
 
-Clearly *apinate* has the potential to pose a significant security risk as it can be used to run arbitrary commands with the privileges assigned to the user it runs as.  Do not, for example, link *apinate* to a command such as rm, or even cat, unless you have taken appropriate precautions.  Or - just don't.
+Clearly *apinate* has the potential to pose a significant security risk as it can be used to run arbitrary commands with the privileges assigned to the user it runs as.  Do not, for example, link *apinate* to a command such as rm, or even cat, unless you have taken appropriate precautions.
 
 *apinate* should not be used with long (or continually) running commands, as the API endpoint will simply not return.
 
@@ -52,7 +52,9 @@ Configuration is from resource (url) to command.  If additional parameters are t
 
 The api can be directed to output json, html, yaml or text.
 
-address, port, params and template directives are optional and default to 0.0.0.0, 8080, false and plain.tmpl
+address, port, params, logfile and template directives are optional and default to 0.0.0.0, 8080, false, stderr and plain.tmpl
+
+Supported options for logfile are stderr or a filename.
 
 #### HTML output
 
@@ -63,6 +65,7 @@ If HTML output is specified, you can create your own template files in ~/.apinat
 address = "0.0.0.0"
 port = 8080
 contenttype = "json"
+logfile = "~/.apinate/apinate.out"
 [[mappings]]
   resource = "echo"
   command = "echo"

@@ -20,6 +20,7 @@ type Config struct {
 	Address     string
 	Port        int
 	ContentType string
+	Logfile     string
 	Mappings    []Mapping
 }
 
@@ -37,6 +38,9 @@ func LoadConfig(filename string) (Config, error) {
 	if err != nil {
 		return config, err
 	} else {
+		if config.Logfile == "" {
+			config.Logfile = "stderr"
+		}
 		if config.Port == 0 {
 			config.Port = 8080
 		}

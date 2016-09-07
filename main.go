@@ -15,6 +15,7 @@ import (
 func main() {
 
 	// log.SetFormatter(&log.JSONFormatter{})
+
 	log.SetOutput(os.Stderr) // or a file
 	log.SetLevel(log.DebugLevel)
 
@@ -49,6 +50,8 @@ func main() {
 
 	var config cfg.Config
 	var err error
+	var logerr error
+	var lf *os.File
 
 	config, err = cfg.LoadConfig(configfile)
 	if err != nil {
@@ -57,6 +60,24 @@ func main() {
 			"configfile": configfile,
 		}).Fatal("Configfile could not be loaded")
 	}
+
+	if config.Logfile != "stdout" {
+		if _, logerr = os.Stat(config.Logfile); logerr != nil {
+			lf, logerr = os.Create(config.Logfile)
+		} else {
+			lf, logerr = os.OpenFile(config.Logfile, os.O_APPEND|os.O_WRONLY, 0644)
+		}
+		if logerr != nil {
+			log.WithFields(log.Fields{
+				"critical": true,
+				"logfile":  config.Logfile,
+				"error":    logerr,
+			}).Fatal("Logfile could not be opened")
+		}
+		log.SetOutput(lf)
+	}
+	gin.DefaultWriter = lf
+	defer lf.Close()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
