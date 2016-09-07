@@ -13,9 +13,26 @@ is a simple HTTP API that can be configured to run any back end
 script or command and display the output in a variety of formats.
 It runs as a single binary, and is driven by a single configuration
 file.
+.P
+.B apinate
+can output JSON, YAML or plain text and can be configured with
+templates to output HTML.
+.P
+.B apinate
+is the simplest and easiest way of spinning up a functional API\.
+.SS "Caution"
+Clearly 
+.B apinate
+has the potential to pose a significant security risk as it can be used to run arbitrary commands with the privileges assigned to the user it runs as. Do not, for example, link 
+.B apinate
+to a command such as rm, or even cat, unless you have taken appropriate precautions.
+.
+.P
+.B apinate
+should not be used with long (or continually) running commands, as the API endpoint will simply not return.
 .SH OPTIONS
-.IP -f
-Override the config file
+.B apinate
+takes no options
 .SH FILES
 .I /etc/apinate/apinate.toml
 .I /etc/apinate/apinate.json
@@ -23,6 +40,7 @@ Override the config file
 .RS
 The system wide configuration file - searched for in this order, and
 stopping when one is found.
+.P
 .RE
 .I ~/.apinate/apinate.toml
 .I ~/.apinate/apinate.json
@@ -31,6 +49,141 @@ stopping when one is found.
 The user-specific configuration file - searched for in this order, and
 stopping when one is found - a per-user configuration file takes 
 precedence over any system configuration file.
+.P
+.RS
+.SH EXAMPLES
+Configuration is from resource (url) to command\. If additional parameters are to be passed to the command, the mapping should be passed a boolean called "params" set to true.
+.P
+The api can be directed to output json, html, yaml or text.
+.P
+address, port, params and template directives are optional for any endpoint and default to 0.0.0.0, 8080, false and plain.tmpl
+.P
+If HTML output is specified, you can create your own template files in ~/.apinate/templates or /usr/share/apinate/templates, and specify them in the mapping configuration (with the template directive)
+.P
+Configuration via
+.B toml
+:
+.nf
+address = "0\.0\.0\.0"
+port = 8080
+contenttype = "json"
+[[mappings]]
+  resource = "echo"
+  command = "echo"
+  params = true
+[[mapping]]
+  resource = "ping"
+  command = "ping"
+  params = true
+[[mapping]]
+  resource = hostname
+  command = "hostname \-f"
+  params = false
+  template = "new\.tmpl"
+.fi
+.P
+Configuration via
+.B json
+:
+.nf
+{
+  "address": "0\.0\.0\.0"
+  "port": 8080
+  "contenttype": "html"
+  "mappings": [
+    {
+      "resource": "echo",
+      "command":  "echo",
+      "params":   true
+    },
+    {
+      "resource": "ping",
+      "command":  "ping",
+      "params":   true
+    },
+    {
+      "resource": "hostname",
+      "command":  "hostname \-f",
+      "params":   false
+    }
+  ]
+}
+.fi
+.P
+Configuration via
+.B yaml
+:
+.nf
+address: 0\.0\.0\.0
+port: 8080
+contenttype: txt
+mappings:
+  \- resource: echo
+    command:  echo
+    params:   true
+  \- resource: ping
+    command:  ping
+    params:   true
+  \- resource: hostname
+    command:  hostname \-f
+    params:   false
+.fi
+.P
+.SS Usage
+The api may be accessed simply via HTTP requests:
+.IP "\(bu" 4
+http://hostname:8080/command
+.
+.IP "\(bu" 4
+http://hostname:8080/command/parameters
+.
+.SS EXAMPLE 1
+In order to report on the systems hostname, and the time taken to ping parameter\-driven locations, configured by json, outputting in xml:
+.
+.B "~/\.apinate\.json"
+.P
+.nf
+{
+  "contenttype": "html",
+  "mappings": [
+    {
+      "resource": "system\-name",
+      "command":  "hostname",
+      "params":   false
+    },
+    {
+      "resource": "ping\-time",
+      "command":  "ping \-c 1 ",
+      "params":   true
+    }
+  ]
+}
+.fi
+.P
+.B "output"
+.nf
+curl http://localhost:8080/system\-name
+<html>
+  <head></head>
+  <body>
+        <p>myhostname</p>
+  </body>
+</html>
+curl http://localhost:8080/ping\-time/www\.google\.com
+<html>
+  <head></head>
+  <body>
+        <p>PING www\.google\.com (216\.58\.208\.132) 56(84) bytes of data\.</p>
+        <p>64 bytes from lhr25s08\-in\-f132\.1e100\.net (216\.58\.208\.132): icmp_seq=1 ttl=57 time=18\.4 ms</p>
+        <p></p>
+        <p>\-\-\- www\.google\.com ping statistics \-\-\-</p>
+        <p>1 packets transmitted, 1 received, 0% packet loss, time 0ms</p>
+        <p>rtt min/avg/max/mdev = 18\.495/18\.495/18\.495/0\.000 ms</p>
+  </body>
+</html>
+.fi
 
 .SH AUTHOR
 Philip Harries <Philip dot Harries dot Unix dot Consulting at gmail dot com>
+.
+.
