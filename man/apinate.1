@@ -34,22 +34,21 @@ should not be used with long (or continually) running commands, as the API endpo
 .B apinate
 takes no options
 .SH FILES
-.I /etc/apinate/apinate.toml
-.I /etc/apinate/apinate.json
-.I /etc/apinate/apinate.yaml
-.RS
-The system wide configuration file - searched for in this order, and
-stopping when one is found.
+.B apinate
+takes one configuration file, which may be in
+.I toml, json
+or
+.I yaml
+format.
+.B apinate
+will search for the files in the following order, and stop when one is found:
 .P
-.RE
-.I ~/.apinate/apinate.toml
-.I ~/.apinate/apinate.json
-.I ~/.apinate/apinate.yaml
-.RS
-The user-specific configuration file - searched for in this order, and
-stopping when one is found - a per-user configuration file takes 
-precedence over any system configuration file.
+.I ~/.apinate/apinate.toml, ~/.apinate/apinate.json, ~/.apinate/apinate.yaml
 .P
+.I /etc/apinate/apinate.toml, /etc/apinate/apinate.json, /etc/apinate/apinate.yaml
+.P
+.RS
+- note that a per-user configuration file will take precedence over a system-wide config file
 .RS
 .SH EXAMPLES
 Configuration is from resource (url) to command\. If additional parameters are to be passed to the command, the mapping should be passed a boolean called "params" set to true.
@@ -58,7 +57,11 @@ The api can be directed to output json, html, yaml or text.
 .P
 address, port, params and template directives are optional for any endpoint and default to 0.0.0.0, 8080, false and plain.tmpl
 .P
-If HTML output is specified, you can create your own template files in ~/.apinate/templates or /usr/share/apinate/templates, and specify them in the mapping configuration (with the template directive)
+If HTML output is specified, you can create your own template files in 
+.I ~/.apinate/templates
+or
+.I /usr/share/apinate/templates
+and specify them in the mapping configuration (with the template directive)
 .P
 Configuration via
 .B toml
@@ -184,6 +187,33 @@ curl http://localhost:8080/ping\-time/www\.google\.com
 .fi
 
 .SH AUTHOR
-Philip Harries <Philip dot Harries dot Unix dot Consulting at gmail dot com>
+Philip Harries <Philip dot Harries at apinate dot io>
 .
+.SH OTHER DOCUMENTATION
+See also:
+.I https://github.com/PhilipHarries/apinate#apinate-
+.
+.SH LICENSE
+.
+MIT License
+.P
+Copyright (c) 2016 Philip Harries
+.P
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+.P
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+.P
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 .
