@@ -1,6 +1,6 @@
 # APINATE [![Build Status](https://travis-ci.org/PhilipHarries/apinate.svg?branch=master)](https://travis-ci.org/PhilipHarries/apinate)
 
-# Configuration-driven arbitrary APIs
+# Configuration-driven, single-binary arbitrary APIs
 
 *apinate* is a simple HTTP API that can be configured to run any back end script or command and display the output in a variety of formats.  It runs as a single binary, and is driven by a single configuration file.
 
