@@ -137,7 +137,7 @@ func main() {
 				}
 				c.HTML(http.StatusOK, template,
 					gin.H{"content": msg})
-			} else if config.ContentType == "txt" {
+			} else if config.ContentType == "raw" {
 				c.String(http.StatusOK, "%s", strings.Join(msg, "\n"))
 			}
 		})

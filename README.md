@@ -4,7 +4,7 @@
 
 *apinate* is a simple HTTP API that can be configured to run any back end script or command and display the output in a variety of formats.  It runs as a single binary, and is driven by a single configuration file.
 
-*apinate* can output JSON, YAML or plain text, and can output configurably templated HTML.
+*apinate* can output JSON, YAML or raw text, and can output configurably templated HTML.
 
 *apinate* is the simplest and easiest way of spinning up a functional API.
 
@@ -50,7 +50,7 @@ docker build .
 
 Configuration is from resource (url) to command.  If additional parameters are to be passed to the command, the mapping should be passed a boolean called "params" set to true.
 
-The api can be directed to output json, html, yaml or text.
+The api can be directed to output json, html, yaml or raw text.
 
 address, port, params, logfile and template directives are optional and default to 0.0.0.0, 8080, false, stderr and plain.tmpl
 
@@ -111,7 +111,7 @@ logfile = "~/.apinate/apinate.out"
 ```
 address: 0.0.0.0
 port: 8080
-contenttype: txt
+contenttype: raw
 mappings:
   - resource: echo
     command:  echo
