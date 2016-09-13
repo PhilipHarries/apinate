@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<!--
+    CSS Template: Linear by TEMPLATED - templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html lang="en">
+	<head>
+		<title>apinate.io</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700,500,900' rel='stylesheet' type='text/css'>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-panels.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel-noscript.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+		</noscript>
+	</head>
+	<body>
+
+	<!-- Header -->
+	<div id="header">
+		<!-- Nav-wrapper -->
+		<div id="nav-wrapper"> 
+			<nav id="nav">
+				<ul>
+					<li><a href="index.html">Homepage</a></li>
+           <li class="active"><a href="documentation.html">Documentation</a></li>
+					<li><a href="examples.html">Examples</a></li>
+					<li><a href="download.html">Download</a></li>
+				</ul>
+			</nav>
+		</div>
+    <!-- Nav-wrapper -->
+
+		<div class="container"> 
+			<!-- Logo -->
+			<div id="logo">
+				<h1><a href="#">apinate</a></h1>
+				<span class="tag">single binary, config-driven, arbitrary APIs</span>
+			</div>
+		</div>
+	</div>
+	<!-- Header --> 
+
+	<!-- Main -->
+  <div id="main">
+    <div class="container">
+      <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="3u">
+          <section>
+            <header>
+              <h2>Quick Navigate</h2>
+            </header>
+            <!-- side-nav -->
+            <section>
+							<ul class="default">
+								<li><a href="#configuration">Configuration</a></li>
+								<li><a href="#config-examples">Configuration Examples</a>
+                  <ul>
+    								<li><a href="#tomlconfig">Toml Configuration Example</a></li>
+    								<li><a href="#jsonconfig">Json Configuration Example</a></li>
+    								<li><a href="#yamlconfig">Yaml Configuration Example</a></li>
+                  </ul>
+                </li>
+                <li><a href="#options">Options</a></li>
+                <li><a href="#usage">Usage</a></li>
+                <li><a href="#faq">FAQs</a></li>
+                <li><a href="#caution">Caution</a></li>
+              </ul>
+            </section>
+            <!-- /side-nav -->
+          </section>
+        </nav>
+        <!-- /Sidebar -->
+
+        <div id="content" class="9u container">
+        <!-- Configuration -->
+        <section>
+          <header>
+            <h2><a id="configuration">Configuration</a></h2>
+          </header>
+          <p>apinate  takes  one  configuration  file, which may be in <u>toml</u>, <u>json</u> or <u>yaml</u> format.  <em>apinate</em> will search for the files in the following order, and stop when one is found:
+          <ul>
+            <li><a href="#tomlconfig">~/.apinate/apinate.toml</a></li>
+            <li><a href="#jsonconfig">~/.apinate/apinate.json</a></li>
+            <li><a href="#yamlconfig">~/.apinate/apinate.yaml</a></li>
+            <li><a href="#tomlconfig">/etc/apinate/apinate.toml</a></li>
+            <li><a href="#jsonconfig">/etc/apinate/apinate.json</a></li>
+            <li><a href="#yamlconfig">/etc/apinate/apinate.yaml</a></li>
+          </ul>
+          <p>Note that per-user configuration will take precedence over system-wide configuration.</p>
+          <p>Configuration is from resource (url) to command.</p>
+          <p>It is possible to pass parameters to the command, in which case the mapping config should include a boolean called "params" set to true.</p>
+          <p>The api can be directed to output <u>json</u>, <u>html</u>, <u>yaml</u> or <u>raw</u> text.</p>
+          <p><em>address</em>, <em>port</em>, <em>params</em>, <em>logfile</em> and <em>template</em> directives are optional and default to <em>0.0.0.0</em>, <em>8080</em>, <em>false</em>, <em>stderr</em> and <em>plain.tmpl</em>.</p>
+          <p>Supported options for logfile are <em>stderr</em> or a filename.</p>
+        </section>
+        <!-- /Configuration -->
+  
+        <!-- Config examples -->
+        <section>
+          <header>
+            <h2><a id="config-examples">Config file examples</a></h2>
+          </header>
+          <a id="tomlconfig"><b>toml</b></a>
+            <pre style="font-family: monospace" class="boxed">
+address = "0.0.0.0"
+port = 8080
+contenttype = "json"
+[[mappings]]
+  resource = "echo"
+  command = "echo"
+  params = true
+[[mapping]]
+  resource = "ping"
+  command = "ping"
+  params = true
+[[mapping]]
+  resource = hostname
+  command = "hostname -f"
+  params = false
+  template = "new.tmpl"
+            </pre>
+            <a id="jsonconfig"><b>json</b></a>
+            <pre style="font-family: monospace" class="boxed">
+{
+  "address": "0.0.0.0"
+  "port": 8080
+  "contenttype": "html"
+  "mappings": [
+    {
+      "resource": "echo",
+      "command":  "echo",
+      "params":   true
+    },
+    {
+      "resource": "ping",
+      "command":  "ping",
+      "params":   true
+    },
+    {
+      "resource": "hostname",
+      "command":  "hostname -f",
+      "params":   false
+    }
+  ]
+}
+            </pre>
+            <a id="yamlconfig"><b>yaml</b></a>
+            <pre style="font-family: monospace" class="boxed">
+address: 0.0.0.0
+port: 8080
+contenttype: raw
+mappings:
+  - resource: echo
+    command:  echo
+    params:   true
+  - resource: ping
+    command:  ping
+    params:   true
+  - resource: hostname
+    command:  hostname -f
+    params:   false
+            </pre>
+          </section>
+          <!-- /Config examples -->
+
+          <!-- Options -->
+          <section>
+            <header>
+              <h2><a id="options">Options</a></h2>
+  					</header>
+            <p><em>apinate</em> takes no options.
+          </section>
+          <!-- /Options -->
+
+          <!-- Usage -->
+          <section>
+            <header>
+              <h2><a id="usage">Usage</a></h2>
+            </header>
+            <p>The api may be accessed simply via HTTP requests:</p>
+            <ul><li>http://hostname:8080/command</li>
+              <li>http://hostname:8080/command/parameters</li>
+            </ul>
+            <p>See the <a href=/examples.html>examples</a> section to see <em>apinate</em> in action.</p>
+          </section>
+          <!-- /Usage -->
+
+          <!-- FAQ -->
+          <section>
+            <header>
+              <h2><a id="FAQs">Frequently Asked Questions</a></h2>
+            </header>
+            <div><b>Q:</b>  My script already outputs json/yaml/[my desired format] - can I use apinate with it?</div>
+            <div><b>A:</b>  Absolutely!  Just use the 'raw' option for contenttype.</div>
+          </section>
+          <!-- /FAQ -->
+
+          <!-- Caution -->
+          <section>
+            <header>
+              <h2><a id="caution">Caution</a></h2>
+            </header>
+            <p>A word of warning:</p>
+            <p>Clearly <em>apinate</em> has the potential to pose a significant security risk as it can be used to run arbitrary commands with the privileges assigned to the user it runs as. Do not, for example, link <em>apinate</em> to a command such as rm, or even cat, unless you have taken appropriate precautions.</p>
+            <p><em>apinate</em> should not be used with long (or continually) running commands, as the API endpoint will simply not return.</p>
+          </section>
+          <!-- /Caution -->
+        </div>
+        <!-- Config examples -->
+
+      </div>
+      <!-- /About -->
+
+    </div>
+  </div>
+	<!-- /About -->
+
+	<!-- Quote -->
+	<div id="quote">
+		<div class="container">
+			<section>
+				<blockquote>Basically, apinate gets you up and running in seconds</blockquote>
+			</section>
+		</div>
+	</div>
+	<!-- /Quote -->
+
+	<!-- Footer -->
+	<div id="footer">
+		<div class="container">
+			<section>
+				<header>
+					<h2>Get in touch</h2>
+					<span class="byline">You can help make <em>apinate</em> better by filing bugs, creating pull requests and giving feedback (positive too).</span>
+				</header>
+				<ul class="contact">
+					<li><a href="http://www.twitter.com/PhilipHarriesIT" class="fa fa-twitter"><span>Twitter</span></a></li>
+					<li><a href="http://www.github.com/PhilipHarries/apinate" class="fa fa-github"><span>Github</span></a></li>
+					<li><a href="mailto:philip@apinate.io" class="fa fa-envelope"><span>Github</span></a></li>
+				</ul>
+			</section>
+		</div>
+	</div>
+	<!-- /Footer -->
+
+	<!-- Copyright -->
+	<div id="copyright">
+		<div class="container">
+			Design: <a href="http://templated.co">TEMPLATED</a>  <!-- Sponsored by: <a href="www.linuxconsulting.co.uk">Linux Consulting</a> -->
+		</div>
+	</div>
+
+
+	</body>
+</html>
