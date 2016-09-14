@@ -39,7 +39,7 @@ func LoadConfig(filename string) (Config, error) {
 		return config, err
 	} else {
 		if config.Logfile == "" {
-			config.Logfile = "stderr"
+			config.Logfile = "stdout"
 		}
 		if config.Port == 0 {
 			config.Port = 8080
