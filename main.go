@@ -100,44 +100,52 @@ func main() {
 		log.WithFields(log.Fields{
 			"resource":  mapping.Resource,
 			"command":   mapping.Command,
-			"params":    mapping.Params,
+			"altparams": mapping.Params,
 			"queryKeys": mapping.QueryKeys,
 		}).Info("Mapping defined")
 		res := mapping.Resource
 		cmd := mapping.Command
-		params := mapping.Params
+		altparams := mapping.Params
 		template := mapping.Template
 		queryKeys := mapping.QueryKeys
 		var command string
-		if params {
-			joinedParams := []string{res, "/:params"}
+		if altparams {
+			joinedParams := []string{res, "/:altparams"}
 			res = strings.Join(joinedParams, "")
+			if len(queryKeys) != 0 {
+				log.WithFields(log.Fields{
+					"resource":  mapping.Resource,
+					"command":   mapping.Command,
+					"altparams": mapping.Params,
+					"queryKeys": mapping.QueryKeys,
+				}).Fatal("queryKeys and altparams should not both be defined for a single resource")
+			}
 		}
 		router.GET(res, func(c *gin.Context) {
-			if params {
-				joinedCmd := []string{cmd, c.Param("params")}
+			if altparams {
+				joinedCmd := []string{cmd, c.Param("altparams")}
 				command = strings.Join(joinedCmd, " ")
 			} else {
 				command = cmd
-			}
-			if len(queryKeys) != 0 {
-				queries := map[string]string{}
-				for _, qk := range queryKeys {
-					if qk.Default != "" {
-						queries[qk.KeyName] = c.DefaultQuery(qk.KeyName, qk.Default)
-					} else {
-						queries[qk.KeyName] = c.Query(qk.KeyName)
+				if len(queryKeys) != 0 {
+					queries := map[string]string{}
+					for _, qk := range queryKeys {
+						if qk.Default != "" {
+							queries[qk.KeyName] = c.DefaultQuery(qk.KeyName, qk.Default)
+						} else {
+							queries[qk.KeyName] = c.Query(qk.KeyName)
+						}
 					}
+					formedParams := []string{}
+					for k, v := range queries {
+						formedParams = append(formedParams, fmt.Sprintf("%s=%s", k, v))
+					}
+					joinedCmd := []string{command}
+					for _, p := range formedParams {
+						joinedCmd = append(joinedCmd, p)
+					}
+					command = strings.Join(joinedCmd, " ")
 				}
-				formedParams := []string{}
-				for k, v := range queries {
-					formedParams = append(formedParams, fmt.Sprintf("%s=%s", k, v))
-				}
-				joinedCmd := []string{command}
-				for _, p := range formedParams {
-					joinedCmd = append(joinedCmd, p)
-				}
-				command = strings.Join(joinedCmd, " ")
 			}
 			var msg []string
 			var err error

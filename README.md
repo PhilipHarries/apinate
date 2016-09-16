@@ -2,7 +2,7 @@
 
 # Configuration-driven, single-binary arbitrary APIs
 
-*apinate* is a simple HTTP API that can be configured to run any back end script or command and display the output in a variety of formats.  It runs as a single binary, and is driven by a single configuration file.
+*apinate* is a simple HTTP API that can be configured to run any back end script or command, with parameters, and display the output in a variety of formats.  It runs as a single binary, and is driven by a single configuration file.
 
 *apinate* can output JSON, YAML or raw text, and can output configurably templated HTML.
 
@@ -48,17 +48,45 @@ docker build .
  - /etc/apinate/apinate.json
  - /etc/apinate/apinate.yaml
 
-Configuration is from resource (url) to command.  If additional parameters are to be passed to the command, the mapping should be passed a boolean called "params" set to true.
+Configuration is from resource (url) to command.
+
+Parameters may be passed to the command in two ways.  Typically, URL's are passed parameters via a query string such as:
+
+"http://www.example.com/resource?param=something"
+
+This is a standard and very configurable mechanism for passing information into an API, and is supported by apinate.
+
+More than one parameter can be passed as follows:
+
+"http://www.example.com/resource?param1=something&param2=somethingelse&param3=somethingelseagain"
+
+These are ultimately passed to the script or command being run in the same format as they are specified in the URL, so that "param1=something" and "param2=somethingelse" from the above URL would be passed as the first and second parameters to the script.  The script therefore requires logic to split the parameters before making use of them.
+
+In many cases it will not be possible to split the parameters, particularly if apinate is being used to create an API for a command or application that is not in your control.  In this case, parameters may be passed through directly by setting "altparams" to true.  The URL can then be called as:
+
+"http://www.example.com/resource/something somethingelse somethingelseagain"
+ - this will call the defined script and pass "something somethingelse somethingelseagain" as positional parameters.  If calling from a browser, the spaces should be translated into "%20" (the URL-encoding for a space)
+
+Only one of "querystrings" or "altparams" may be specified for one resource - specifying both querystrings and altparams as true will result in an error and apinate will not start.
 
 The api can be directed to output json, html, yaml or raw text.
 
-address, port, params, logfile and template directives are optional and default to 0.0.0.0, 8080, false, stderr and plain.tmpl
+address, port, altparams, querykeys, logfile and template directives are optional and default to:
 
-Supported options for logfile are stderr or a filename.
+address:   0.0.0.0
+port:      8080
+altparams: false
+querykeys: [] (an empty array) 
+logfile:   stdout
+template:  plain.tmpl
+
+logfile can take a filename, or the directive "stdout" will direct output to standard error.
+
+querykeys takes an array of queries, which have a keyname, and an optional default value.  The format for defining these can be found in the respective configuration sections below.
 
 #### HTML output
 
-If HTML output is specified, you can create your own template files in ~/.apinate/templates or /usr/share/apinate/templates, and specify which to use in the mapping configuration with the template directive
+If HTML output is specified, template files can be added in ~/.apinate/templates or /usr/share/apinate/templates, and specify which to use in the mapping configuration with the template directive
 
 ### toml
 ```
@@ -69,16 +97,24 @@ logfile = "~/.apinate/apinate.out"
 [[mappings]]
   resource = "echo"
   command = "echo"
-  params = true
-[[mapping]]
+  altparams = true
+[[mappings]]
   resource = "ping"
   command = "ping"
-  params = true
-[[mapping]]
+  altparams = true
+[[mappings]]
   resource = hostname
   command = "hostname -f"
-  params = false
+  altparams = false
   template = "new.tmpl"
+[[mappings]]
+  resource = myscript
+  command = "/usr/local/bin/myscript"
+  [[ mappings.querykeys ]]
+    keyname = "key1"
+    default = "value1"
+  [[ mappings.querykeys ]]
+    keyname = "key2"
 ```
 
 ### json
@@ -89,19 +125,23 @@ logfile = "~/.apinate/apinate.out"
   "contenttype": "html"
   "mappings": [
     {
-      "resource": "echo",
-      "command":  "echo",
-      "params":   true
+      "resource":  "echo",
+      "command":   "echo",
+      "altparams": true
     },
     {
       "resource": "ping",
       "command":  "ping",
-      "params":   true
+      "altparams": false,
+      "querykeys": [
+        "keyname": "host",
+        "default": "127.0.0.1"
+      ]
     },
     {
-      "resource": "hostname",
-      "command":  "hostname -f",
-      "params":   false
+      "resource":  "hostname",
+      "command":   "hostname -f",
+      "altparams": false
     }
   ]
 }
@@ -113,15 +153,15 @@ address: 0.0.0.0
 port: 8080
 contenttype: raw
 mappings:
-  - resource: echo
-    command:  echo
-    params:   true
-  - resource: ping
-    command:  ping
-    params:   true
-  - resource: hostname
-    command:  hostname -f
-    params:   false
+  - resource:  echo
+    command:   echo
+    altparams: true
+  - resource:  ping
+    command:   ping
+    altparams: true
+  - resource:  hostname
+    command:   hostname -f
+    altparams: false
 ```
 
 # Usage
@@ -131,9 +171,13 @@ The api may be accessed simply via HTTP requests:
 - http://hostname:8080/command
 - http://hostname:8080/command/parameters
 
-# Examples
+# Example
 
-In order to report on the systems hostname, and the time taken to ping parameter-driven locations, configured by json, outputting in xml:
+The following configuration will:
+    report the system hostname at /hostname
+    record the time taken to ping parameter-driven locations at /pint-time
+    pass parameters val1, val2 and an operator (+,-,/,*) to a calculator script
+ - this example is configured by json to output in html
 
 ### ~/.apinate.json
 ```
@@ -143,12 +187,30 @@ In order to report on the systems hostname, and the time taken to ping parameter
     {
       "resource": "system-name",
       "command":  "hostname",
-      "params":   false
+      "altparams":   false
     },
     {
       "resource": "ping-time",
       "command":  "ping -c 1 ",
-      "params":   true
+      "altparams":   true
+    },
+    {
+      "resource": "calc",
+      "command":  "/usr/local/bin/mycalc",
+      "querykeys": [
+        {
+          "keyname":  "val1",
+          "default":  "0"
+        },
+        {
+          "keyname":  "val2",
+          "default":  "0"
+        }  ,
+        {
+          "keyname":  "operator",
+          "default":  "+"
+        }  
+      ]
     }
   ]
 }
@@ -162,6 +224,7 @@ curl http://localhost:8080/system-name
         <p>myhostname</p>
   </body>
 </html>
+
 curl http://localhost:8080/ping-time/www.google.com
 <html>
   <head></head>
@@ -174,7 +237,17 @@ curl http://localhost:8080/ping-time/www.google.com
         <p>rtt min/avg/max/mdev = 18.495/18.495/18.495/0.000 ms</p>
   </body>
 </html>
+
+curl http://localhost:8080/calc?val1=10&val2=5&operator=\* 
+<html>
+  <head></head>
+  <body>
+        <p>50</p>
+  </body>
+</html>
 ```
+
+
 
 # Build / Packaging
 

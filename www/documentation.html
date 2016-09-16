@@ -85,7 +85,7 @@
           <header>
             <h2><a id="configuration">Configuration</a></h2>
           </header>
-          <p>apinate  takes  one  configuration  file, which may be in <u>toml</u>, <u>json</u> or <u>yaml</u> format.  <em>apinate</em> will search for the files in the following order, and stop when one is found:
+          <p><em>apinate</em>  takes  one  configuration  file, which may be in <u>toml</u>, <u>json</u> or <u>yaml</u> format.  <em>apinate</em> will search for the files in the following order, and stop when one is found:
           <ul>
             <li><a href="#tomlconfig">~/.apinate/apinate.toml</a></li>
             <li><a href="#jsonconfig">~/.apinate/apinate.json</a></li>
@@ -96,10 +96,33 @@
           </ul>
           <p>Note that per-user configuration will take precedence over system-wide configuration.</p>
           <p>Configuration is from resource (url) to command.</p>
-          <p>It is possible to pass parameters to the command, in which case the mapping config should include a boolean called "params" set to true.</p>
+          <p>It is possible to pass parameters to the command, in two ways.  Typically, URL's are passed parameters via a query string such as:</p>
+          <p>http://www.example.com/resource?param=something</p>
+          <p>This is a standard and very configurable mechanism for passing information into an API, and is supported by <em>apinate</em>.</p>
+          <p>More than one parameter may be passed as follows:</p>
+          <p>http://www.example.com/resource?param=something&amp;param2=somethingelse&amp;param3=somethingelseagain</p>
+          <p>These are ultimately passed to the script or command being run in the same format as they are specified in the URL, os that "param1=something" and "param2=somethingelse" from the above URL would be passed as the first and second parameters to the script.  The script therefore requires logic to split the parameters before making use of them.</p>
+          <p>In many cases it will not be possible to split the parameters, particularly if <em>apinate</em> is being used to create an API for a command or application that is not in your control.  In this case, parameters may be passed through directly by setting "altparams" to <u>true</u>.  The URL can then by called as:</p>
+          <p>http://www.example.com/resource/something something else somethingelseagain</p>
+          <p> - this will call the defined script and pass "something somethingelse somethingelseagain" as positional parameters.  If calling from a browser, spaces should be translated to "%20" (the URL-encoding for a space).</p>
+          <p>Only one of "querystrings" or "altparams" may be specified for one resource - specifying <em>querystrings</em> and setting <em>altparams</em> to <u>true</u> will result in an error, and <em>apinate</em> will fail to start.</p>
+          <p><em>address</em>, <em>port</em>, <em>altparams</em>, <em>querykeys</em>, <em>logfile</em> and <em>template</em> are all optional, and default to:</p>
+          <ul><li>address: 0.0.0.0</li>
+            <li>port: 8080</li>
+            <li>altparams: false</li>
+            <li>querykeys: [ ] (an empty array)</li>
+            <li>logfile: stdout</li>
+            <li>template: plain.tmpl</li>
+          </ul>
+          <p><em>logfile</em> can take a filename, or the directive "stdout" will direct output to standard error</p>
+          <p><em>querykeys</em> takes an array of queries, which have a keyname and an optional default value.  The format for defining these can be found in the respective configuration sections below.</p>
+          
           <p>The api can be directed to output <u>json</u>, <u>html</u>, <u>yaml</u> or <u>raw</u> text.</p>
-          <p><em>address</em>, <em>port</em>, <em>params</em>, <em>logfile</em> and <em>template</em> directives are optional and default to <em>0.0.0.0</em>, <em>8080</em>, <em>false</em>, <em>stdout</em> and <em>plain.tmpl</em>.</p>
+          <p><em>address</em>, <em>port</em>, <em>altparams</em>, <em>logfile</em> and <em>template</em> directives are optional and default to <em>0.0.0.0</em>, <em>8080</em>, <em>false</em>, <em>stdout</em> and <em>plain.tmpl</em>.</p>
           <p>Supported options for logfile are <em>stdout</em> or a filename.</p>
+
+          <h3>HTML output</h3>
+          <p>If HTML output is specified, template files can be added in ~/.apinate/templates or /usr/share/apinate/templates.  The <em>template</em> directive can then be used to specify which to use for a given resource.</p>
         </section>
         <!-- /Configuration -->
   
@@ -116,16 +139,24 @@ contenttype = "json"
 [[mappings]]
   resource = "echo"
   command = "echo"
-  params = true
-[[mapping]]
+  altparams = true
+[[mappings]]
   resource = "ping"
   command = "ping"
-  params = true
-[[mapping]]
+  altparams = true
+[[mappings]]
   resource = hostname
   command = "hostname -f"
-  params = false
+  altparams = false
   template = "new.tmpl"
+[[mappings]
+  resource = myscript
+  command = "/usr/local/bin/myscript"
+  [[ mappings.querykeys ]]
+    keyname = "key1"
+    default = "value1"
+  [[ mappings.querykeys ]]
+    keyname = "key2"
             </pre>
             <a id="jsonconfig"><b>json</b></a>
             <pre style="font-family: monospace" class="boxed">
@@ -137,17 +168,17 @@ contenttype = "json"
     {
       "resource": "echo",
       "command":  "echo",
-      "params":   true
+      "altparams":   true
     },
     {
       "resource": "ping",
       "command":  "ping",
-      "params":   true
+      "altparams":   true
     },
     {
       "resource": "hostname",
       "command":  "hostname -f",
-      "params":   false
+      "altparams":   false
     }
   ]
 }
@@ -160,13 +191,13 @@ contenttype: raw
 mappings:
   - resource: echo
     command:  echo
-    params:   true
+    altparams:   true
   - resource: ping
     command:  ping
-    params:   true
+    altparams:   true
   - resource: hostname
     command:  hostname -f
-    params:   false
+    altparams:   false
             </pre>
           </section>
           <!-- /Config examples -->
