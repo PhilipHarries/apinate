@@ -1,15 +1,17 @@
 package main
 
 import (
-	cfg "github.com/PhilipHarries/apinate/config"
-	"github.com/PhilipHarries/apinate/exec"
-	log "github.com/Sirupsen/logrus"
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	cfg "github.com/PhilipHarries/apinate/config"
+	"github.com/PhilipHarries/apinate/exec"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -96,14 +98,16 @@ func main() {
 
 	for _, mapping := range config.Mappings {
 		log.WithFields(log.Fields{
-			"resource": mapping.Resource,
-			"command":  mapping.Command,
-			"params":   mapping.Params,
+			"resource":  mapping.Resource,
+			"command":   mapping.Command,
+			"params":    mapping.Params,
+			"queryKeys": mapping.QueryKeys,
 		}).Info("Mapping defined")
 		res := mapping.Resource
 		cmd := mapping.Command
 		params := mapping.Params
 		template := mapping.Template
+		queryKeys := mapping.QueryKeys
 		var command string
 		if params {
 			joinedParams := []string{res, "/:params"}
@@ -115,6 +119,25 @@ func main() {
 				command = strings.Join(joinedCmd, " ")
 			} else {
 				command = cmd
+			}
+			if len(queryKeys) != 0 {
+				queries := map[string]string{}
+				for _, qk := range queryKeys {
+					if qk.Default != "" {
+						queries[qk.KeyName] = c.DefaultQuery(qk.KeyName, qk.Default)
+					} else {
+						queries[qk.KeyName] = c.Query(qk.KeyName)
+					}
+				}
+				formedParams := []string{}
+				for k, v := range queries {
+					formedParams = append(formedParams, fmt.Sprintf("%s=%s", k, v))
+				}
+				joinedCmd := []string{command}
+				for _, p := range formedParams {
+					joinedCmd = append(joinedCmd, p)
+				}
+				command = strings.Join(joinedCmd, " ")
 			}
 			var msg []string
 			var err error

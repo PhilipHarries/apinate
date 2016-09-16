@@ -2,18 +2,32 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/BurntSushi/toml"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/BurntSushi/toml"
+	"gopkg.in/yaml.v2"
 )
 
+type QueryKeyType struct {
+	KeyName string
+	Default string
+}
+
+func (q *QueryKeyType) IsEmpty() bool {
+	if q.KeyName == "" {
+		return true
+	}
+	return false
+}
+
 type Mapping struct {
-	Resource string
-	Command  string
-	Params   bool
-	Template string
+	Resource  string
+	Command   string
+	Params    bool
+	QueryKeys []QueryKeyType
+	Template  string
 }
 
 type Config struct {
