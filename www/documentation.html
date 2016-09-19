@@ -97,10 +97,10 @@
           <p>Note that per-user configuration will take precedence over system-wide configuration.</p>
           <p>Configuration is from resource (url) to command.</p>
           <p>It is possible to pass parameters to the command, in two ways.  Typically, URL's are passed parameters via a query string such as:</p>
-          <p>http://www.example.com/resource?param=something</p>
+          <p style="font-family: monospace">http://www.example.com/resource?param=something</p>
           <p>This is a standard and very configurable mechanism for passing information into an API, and is supported by <em>apinate</em>.</p>
           <p>More than one parameter may be passed as follows:</p>
-          <p>http://www.example.com/resource?param=something&amp;param2=somethingelse&amp;param3=somethingelseagain</p>
+          <p style="font-family: monospace">http://www.example.com/resource?param=something&amp;param2=somethingelse&amp;param3=somethingelseagain</p>
           <p>These are ultimately passed to the script or command being run in the same format as they are specified in the URL, os that "param1=something" and "param2=somethingelse" from the above URL would be passed as the first and second parameters to the script.  The script therefore requires logic to split the parameters before making use of them.</p>
           <p>In many cases it will not be possible to split the parameters, particularly if <em>apinate</em> is being used to create an API for a command or application that is not in your control.  In this case, parameters may be passed through directly by setting "altparams" to <u>true</u>.  The URL can then by called as:</p>
           <p>http://www.example.com/resource/something something else somethingelseagain</p>

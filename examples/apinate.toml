@@ -11,3 +11,12 @@ contenttype = "json"
   resource = "ping"
   command = "ping -c 5 "
   params = true
+[[mappings]]
+  resource = "myscript"
+  command = "/usr/local/bin/myscript"
+  params = false
+[[mappings.querykeys]]
+  keyname = "name"
+  default = "John Doe"
+[[mappings.querykeys]]
+  keyname = "age"

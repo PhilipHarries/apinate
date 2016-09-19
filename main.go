@@ -149,27 +149,37 @@ func main() {
 			}
 			var msg []string
 			var err error
+			rc := 200
 			if msg, err = exec.Exec(command); err != nil {
 				log.WithFields(log.Fields{
 					"command": command,
 					"message": msg,
 					"error":   err,
-				}).Info("Error running command.")
+				}).Error("Error running command.")
+				rc = 400
 			}
 			if config.ContentType == "json" {
-				c.JSON(200, gin.H{"message": msg})
+				c.JSON(rc, gin.H{"message": msg})
 			} else if config.ContentType == "xml" {
-				c.XML(200, gin.H{"message": msg})
+				c.XML(rc, gin.H{"message": msg})
 			} else if config.ContentType == "yaml" {
-				c.YAML(200, gin.H{"message": msg})
+				c.YAML(rc, gin.H{"message": msg})
 			} else if config.ContentType == "html" {
+				httpStatus := http.StatusOK
+				if rc != 200 {
+					httpStatus = http.StatusBadRequest
+				}
 				if template == "" {
 					template = "plain.tmpl"
 				}
-				c.HTML(http.StatusOK, template,
+				c.HTML(httpStatus, template,
 					gin.H{"content": msg})
 			} else if config.ContentType == "raw" {
-				c.String(http.StatusOK, "%s", strings.Join(msg, "\n"))
+				httpStatus := http.StatusOK
+				if rc != 200 {
+					httpStatus = http.StatusBadRequest
+				}
+				c.String(httpStatus, "%s", msg, "\n")
 			}
 		})
 	}

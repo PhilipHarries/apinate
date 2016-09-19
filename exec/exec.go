@@ -20,11 +20,7 @@ func Exec(commandString string) ([]string, error) {
 	args := splitString[1:]
 
 	out, err := exec.Command(command, args...).CombinedOutput()
-	if err != nil {
-		return nil, err
-	}
-
 	arrayOut := SplitStringToSlice(string(out))
 
-	return arrayOut, nil
+	return arrayOut, err
 }

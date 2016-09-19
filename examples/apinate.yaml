@@ -9,3 +9,10 @@ mappings:
   - resource: ping
     command: ping -c 5
     params: true
+  - resource: myscript
+    command: /usr/local/bin/myscript
+    params: false
+    querykeys:
+      - keyname: "name"
+        default: "John Doe"
+      - keyname: "age"
