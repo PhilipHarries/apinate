@@ -103,11 +103,11 @@
           <p style="font-family: monospace">http://www.example.com/resource?param=something&amp;param2=somethingelse&amp;param3=somethingelseagain</p>
           <p>These are ultimately passed to the script or command being run in the same format as they are specified in the URL, os that "param1=something" and "param2=somethingelse" from the above URL would be passed as the first and second parameters to the script.  The script therefore requires logic to split the parameters before making use of them.</p>
           <p>In many cases it will not be possible to split the parameters, particularly if <em>apinate</em> is being used to create an API for a command or application that is not in your control.  In this case, parameters may be passed through directly by setting "altparams" to <u>true</u>.  The URL can then by called as:</p>
-          <p>http://www.example.com/resource/something something else somethingelseagain</p>
+          <p style="font-family: monospace">http://www.example.com/resource/something something else somethingelseagain</p>
           <p> - this will call the defined script and pass "something somethingelse somethingelseagain" as positional parameters.  If calling from a browser, spaces should be translated to "%20" (the URL-encoding for a space).</p>
           <p>Only one of "querystrings" or "altparams" may be specified for one resource - specifying <em>querystrings</em> and setting <em>altparams</em> to <u>true</u> will result in an error, and <em>apinate</em> will fail to start.</p>
           <p><em>address</em>, <em>port</em>, <em>altparams</em>, <em>querykeys</em>, <em>logfile</em> and <em>template</em> are all optional, and default to:</p>
-          <ul><li>address: 0.0.0.0</li>
+          <ul style="font-family: monospace"><li>address: 0.0.0.0</li>
             <li>port: 8080</li>
             <li>altparams: false</li>
             <li>querykeys: [ ] (an empty array)</li>
@@ -121,7 +121,7 @@
           <p><em>address</em>, <em>port</em>, <em>altparams</em>, <em>logfile</em> and <em>template</em> directives are optional and default to <em>0.0.0.0</em>, <em>8080</em>, <em>false</em>, <em>stdout</em> and <em>plain.tmpl</em>.</p>
           <p>Supported options for logfile are <em>stdout</em> or a filename.</p>
 
-          <h3>HTML output</h3>
+          <b>HTML output</b>
           <p>If HTML output is specified, template files can be added in ~/.apinate/templates or /usr/share/apinate/templates.  The <em>template</em> directive can then be used to specify which to use for a given resource.</p>
         </section>
         <!-- /Configuration -->
