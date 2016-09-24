@@ -1040,3 +1040,8 @@
 			font-weight: 300;
 			color: rgba(255,255,255,.6);
 		}	
+
+                code
+		{
+			font-family: monospace;
+		}
