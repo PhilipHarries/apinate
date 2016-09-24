@@ -59,6 +59,51 @@
               <p>The following example makes use of a script called <code>peopledb</code> that may be found in the <code>examples</code> subdirectory of the project's <a href="https://github.com/PhilipHarries/apinate">github repository</a>.</p>
               <p><code>peopledb</code> may be used to store, update and retrieve name and age records for a group of people.  <em>apinate</em> is used to configure the script first to output html, and then to output json, using the <em>raw</em> output parameter.</p>
               <p><script type="text/javascript" src="https://asciinema.org/a/eskyshqa3fz114ymac7snc8ej.js" id="asciicast-eskyshqa3fz114ymac7snc8ej" async></script></p>
+              <p>In the course of the demo, the following config file is created:</p>
+              <pre style="font-family: monospace" class="boxed">
+{
+  "contenttype": "html",
+  "mappings": [
+    {
+      "resource": "peopledb",
+      "command": "/tmp/peopledb.sh",
+      "params": false,
+      "template": "peopledb.tmpl",
+      "querykeys": [
+        {
+          "keyname": "fn",
+          "default": "list"
+        },
+        {
+          "keyname": "name",
+          "default": ""
+        },
+        {
+          "keyname": "age",
+          "default": 0
+        }
+      ]
+    }
+  ]
+}
+              </pre>
+              <p>The following html template is also created:</p>
+              <pre style="font-family: monospace" class="boxed">
+<html>
+  <head><title>People DB</title></head>
+  <body>
+    <h3>People DB</h3>
+    {{ range $line := .content }}
+      <p><b>{{ $line }}</b></p>
+    {{ end }}
+    <p>PeopleDB: Tracking names and ages since 2016</p>
+  </body>
+</html>
+              </pre>
+              <p>This configuration means that when apinate is called from a browser, the webpage displayed looks like:<p>
+              <img src="images/peopledb1.png">
+              <p>and,</p>
+              <img src="images/peopledb2.png">
             </section>
           </div>
           <div class="row">
