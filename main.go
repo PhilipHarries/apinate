@@ -16,9 +16,7 @@ import (
 
 func main() {
 
-	// log.SetFormatter(&log.JSONFormatter{})
-
-	log.SetOutput(os.Stderr) // or a file
+	log.SetOutput(os.Stderr)
 	log.SetLevel(log.DebugLevel)
 
 	configfile := ""
@@ -179,7 +177,8 @@ func main() {
 				if rc != 200 {
 					httpStatus = http.StatusBadRequest
 				}
-				c.String(httpStatus, "%s", msg, "\n")
+				joinedMsg := strings.Join(msg, "")
+				c.String(httpStatus, "%s", joinedMsg)
 			}
 		})
 	}

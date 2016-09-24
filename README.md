@@ -10,7 +10,7 @@
 
 ### Caution
 
-Clearly *apinate* has the potential to pose a significant security risk as it can be used to run arbitrary commands with the privileges assigned to the user it runs as.  Do not, for example, link *apinate* to a command such as rm, or even cat, unless you have taken appropriate precautions.
+Clearly a poorly configured *apinate* has the potential to pose a significant security risk as it can be used to run arbitrary commands with the privileges assigned to the user it runs as.  Do not, for example, link *apinate* to a command such as rm, or even cat, unless you have taken appropriate precautions.  If security is a concern, *apinate* should be linked to commands wrapped by scripts that validate inputs.
 
 *apinate* should not be used with long (or continually) running commands, as the API endpoint will simply not return.
 
