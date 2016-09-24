@@ -89,16 +89,16 @@
               </pre>
               <p>The following html template is also created:</p>
               <pre style="font-family: monospace" class="boxed">
-\<html\>
-  \<head\>\<title\>People DB\<\/title\>\<\/head\>
-  \<body\>
-    \<h3\>People DB\<\/h3\>
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;People DB&lt;title&gt;&lt;head&gt;
+  &lt;body&gt;
+    &lt;h3&gt;People DB&lt;h3&gt;
     {{ range $line := .content }}
-      \<p\>\<b\>{{ $line }}\<\/b\>\<\/p\>
+      &lt;p&gt;&lt;b&gt; $line }}&lt;b&gt;lt;p&gt;
     {{ end }}
-    \<p\>PeopleDB: Tracking names and ages since 2016\<\/p\>
-  \<\/body\>
-\<\/html\>
+    &lt;p&gt;PeopleDB: Tracking names and ages since 2016&lt;p&gt;
+  &lt;body&gt;
+&lt;html&gt;
               </pre>
               <p>This configuration means that when apinate is called from a browser, the webpage displayed looks like:<p>
               <img src="images/peopledb1.png">
