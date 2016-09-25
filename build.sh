@@ -29,3 +29,9 @@ gzip ${build_dir}/usr/share/man/man1/apinate.1
 
 fpm -s dir -t rpm -n apinate -v $1 -C ${build_dir}
 fpm -s dir -t deb -n apinate -v $1 -C ${build_dir}
+if [[ "$(uname)" == "Darwin" ]];then
+  if [[ "$(which pkgbuild)" != "" ]];then
+    fpm -s dir -t osxpkg -n apinate -v $1 -C ${build_dir}
+  fi
+fi
+
